@@ -5,9 +5,7 @@ const videoGrid = document.getElementById('video-grid')
 let EGO
 let myStream
 let users = {}
-const myVideo = document.createElement('video')
-myVideo.muted=true
-
+let myVideo 
 
 const myPeer = new Peer(undefined, {
   host: '/',
@@ -92,7 +90,6 @@ socket.on('close-room', room => {
 })
 
 
-
 function mute(){
   const track = myStream.getTracks().find(track => track.kind === "audio")
   if(track.enabled){
@@ -123,18 +120,15 @@ navigator.mediaDevices.getUserMedia({
   audio: true
 }).then(stream => {
   myStream = stream
-  addVideoStream(myVideo, stream, EGO.id)
+  myVideo = new Video(stream)
+  myVideo.silent()
+  videoGrid.append(myVideo.getDomElement())
   socket.emit('join-room', ROOM_ID, EGO)
 })
 
 function addVideoStream(video, stream, user) {
   console.log("add video")
-  if(stream){
-    video.srcObject = stream
-    video.addEventListener('loadedmetadata', () => {
-      video.play()
-    })
-    videoGrid.append(video)
-  }
+  const v = new Video(stream)
+  videoGrid.append(v.getDomElement())
 }
 
