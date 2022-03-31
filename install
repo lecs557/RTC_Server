@@ -1,0 +1,4 @@
+#!/bin/bash
+
+npm i express ejs socket.io 
+npm i peer -g

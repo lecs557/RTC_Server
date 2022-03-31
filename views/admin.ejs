@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="admin.css">
+    <script>
+      const ROOMS =<%-JSON.stringify(rooms)%>
+    </script>
+    <script defer src="/socket.io/socket.io.js"></script>
+    <script defer src="admin.js"></script>
+    <title>Admin</title>
+</head>
+<body>
+  <h1>Admin</h1>
+  <h2></h2>
+  <input type="text" name="room" id="open_new_room">
+  <input type="button" onclick="open_new_room()" value="Create new Room"><br>
+  <select id="sel_rooms"></select>
+  <input type="button" onclick="go_to_room()" value="Go to Room"> 
+  <input type="button" onclick="close_room()" value="Close Room"> 
+  <hr>
+  <div id="rooms">
+    <h2>ROOMS</h2>
+  </div>
+</body>
+</html>

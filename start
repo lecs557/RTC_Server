@@ -1,0 +1,4 @@
+#!/bin/bash
+
+gnome-terminal -- node server.js
+firefox http://localhost:3000/admin
