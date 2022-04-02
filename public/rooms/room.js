@@ -1,6 +1,8 @@
 // Variables
 const socket = io('/')
 const videoGrid = document.getElementById('video-grid')
+const room_name = document.getElementById('room-name')
+room_name.innerHTML = ROOM.name
 
 let EGO
 let myStream
@@ -25,35 +27,35 @@ myPeer.on('open', id => {
 
 socket.on('user-join-room', user => {
   const call = myPeer.call(user.id, myStream, {metadata: EGO})
-  const video = document.createElement('video')
   console.log("User has connected - call")
-  console.log(call)
+  let video
   call.on('stream', userVideoStream => {
-    addVideoStream(video, userVideoStream, user.id)
+    video = new Video(user, userVideoStream).getDomElement()
+    if(!users[user.id]){
+      videoGrid.append(video)
+      console.log("append")
+      user.video = video
+      users[user.id] = user
+    }
   })
   user.call = call
-  user.video = video
-  users[user.id] = user
-  console.log(user)
 })
 
-function call(user){
-  myPeer.call(users.id, myStream, {metadata: EGO})
-  console.log(user)
-}
-
 myPeer.on('call', call => {
-  console.log("caal")
   const user = call.metadata
-  console.log("You get a call from "+ user)
-  const video = document.createElement('video')
+  let video
+  console.log("You get a call from "+ user.name)
   call.on('stream', userVideoStream => {
-    addVideoStream(video, userVideoStream, user)
+    video = new Video(user, userVideoStream).getDomElement()
+    if(!users[user.id]){
+      videoGrid.append(video)
+      console.log("append get")
+      user.video = video
+      users[user.id] = user
+    }
   })
   user.call = call
-  user.video = video
-  users[user.id] = user
-  call.answer(myVideo.srcObject)
+  call.answer(myStream)
 })
 
 socket.on('toggle-mute', (roomId, userId) => {
@@ -84,7 +86,7 @@ socket.on('user-leave-room', userId => {
 })
 
 socket.on('close-room', room => {
-  if(room == ROOM_ID){
+  if(room == ROOM.id){
     window.location='/a'
   }
 })
@@ -99,7 +101,7 @@ function mute(){
     track.enabled=true
     EGO.muted = false
   }
-  socket.emit('toggle-mute', ROOM_ID, EGO.id)
+  socket.emit('toggle-mute', ROOM.id, EGO.id)
 }
 
 function hide(){
@@ -111,7 +113,7 @@ function hide(){
     track.enabled = true
     EGO.hide = false
   }
-  socket.emit('toggle-hide', ROOM_ID, EGO.id)
+  socket.emit('toggle-hide', ROOM.id, EGO.id)
 }
 
 //Code
@@ -120,15 +122,9 @@ navigator.mediaDevices.getUserMedia({
   audio: true
 }).then(stream => {
   myStream = stream
-  myVideo = new Video(stream)
+  myVideo = new Video(EGO, stream)
   myVideo.silent()
   videoGrid.append(myVideo.getDomElement())
-  socket.emit('join-room', ROOM_ID, EGO)
+  socket.emit('join-room', ROOM.id, EGO)
 })
-
-function addVideoStream(video, stream, user) {
-  console.log("add video")
-  const v = new Video(stream)
-  videoGrid.append(v.getDomElement())
-}
 

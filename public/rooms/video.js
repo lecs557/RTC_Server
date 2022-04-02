@@ -1,22 +1,22 @@
 class Video{
-  constructor(stream){
+  constructor(user, stream){
     this.domElement = document.createElement("div")
     const top = document.createElement("div")
+    top.innerHTML=user.name
     const bottom = document.createElement("div")
-
     const video = document.createElement("video")
     video.style.margin="auto"
-    if(stream){
-      video.srcObject = stream
-      video.addEventListener('loadedmetadata', () => {
+    video.srcObject = stream
+    video.addEventListener('loadedmetadata', () => {
         video.play()
-      })
-    }
+     })
+    this.stream = stream
+    this.user = user
     this.video = video
     this.domElement.append(top)
     this.domElement.append(video)
-    this.domElement.append(bottom)
   }
+
 
   silent(){
     this.video.muted = true

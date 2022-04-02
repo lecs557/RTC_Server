@@ -22,7 +22,7 @@ app.get('/rooms/:roomid', (req, res) => {
       return
     }
     console.log("ROOM "+roomId)
-    res.render('room', { roomId: roomId })
+    res.render('room', { room: ROOMS[roomId] })
   }
 })
 
@@ -54,14 +54,14 @@ io.on('connection', socket => {
     socket.broadcast.emit('join_room', roomId, user)
     ROOMS[roomId].users.push(user)
     socket.on('ban-user', user => {
-      socket.broadcast.emit('ban-user', user)  
-      console.log('BAN: '+user)    
+      socket.broadcast.emit('ban-user', user.id)  
+      console.log('BAN: '+user.id)    
     }) 
 
 
     socket.on('disconnect', () => {
-      socket.to(roomId).emit('user-leave-room', user)
-      socket.broadcast.emit('leave_room',roomId, user)
+      socket.to(roomId).emit('user-leave-room', user.id)
+      socket.broadcast.emit('leave_room',roomId, user.id)
       if(ROOMS[roomId]){      
         const index = ROOMS[roomId].users.indexOf(user)
         if (index > -1) {

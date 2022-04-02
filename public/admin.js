@@ -13,13 +13,9 @@ socket.on('join_room', (roomId, user) => {
   add_user(user, roomId)
 })
 
-socket.on('leave_room', (roomId, user) => {
+socket.on('leave_room', (roomId, userId) => {
   console.log('user leaved room')
-    const index = ROOMS[roomId].users.indexOf(user)
-    if (index > -1) {
-      ROOMS[roomId].splice(index, 1)
-    }
-    remove_user(user, roomId)
+    remove_user(userId, roomId)
 })
 
 socket.on('opened_room', room => {
@@ -47,8 +43,8 @@ function close_room(){
 function render_rooms(){
   for(var roomId in ROOMS){ 
     add_room(ROOMS[roomId])    
-    for(var i in ROOMS[room].user){
-      add_user(ROOMS[room].user[i], roomId )
+    for(var i in ROOMS[roomId].users){
+      add_user(ROOMS[roomId].users[i], roomId )
     }
   } 
 }
@@ -93,13 +89,13 @@ function add_user(user, roomId){
   USERDIVS_OF_ROOM[roomId].append(div_user)
 }
 
-function remove_user(user, roomId){
+function remove_user(userId, roomId){
   if(!USERDIVS_OF_ROOM[roomId] || USERDIVS_OF_ROOM[roomId].children.length==0){
     console.log('no user in room not found')
     return
   }
   for(i in USERDIVS_OF_ROOM[roomId].children){
-    if(USERDIVS_OF_ROOM[roomId].children[i].children[1].innerHTML == user.id){
+    if(USERDIVS_OF_ROOM[roomId].children[i].children[1].innerHTML == userId){
       USERDIVS_OF_ROOM[roomId].children[i].remove()
       break
     }
